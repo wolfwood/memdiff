@@ -2,6 +2,8 @@
 
 use strict;
 
+use Jobs;
+
 unless(scalar @ARGV >= 2){
 		print "semantically-compressed recursive copy for memsnap data sets\n\n";
 		print "\tUsage: $0 <data dir> <compressed clone dir>\n";
@@ -65,7 +67,7 @@ while($j < $maxseg){
 				unless(-s$out){
 						my($cmd) = "bsdiff $last $curr $out";
 						print("$cmd\n");
-						system($cmd);
+						enqueueJob($cmd);
 				}
 
 				$lastsnap = $i;
@@ -73,3 +75,5 @@ while($j < $maxseg){
 
 		$j++;
 }
+
+drainQueue();

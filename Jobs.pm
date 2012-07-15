@@ -22,7 +22,7 @@ sub enqueueJob{
 		}
 
 		if(fork == 0){
-				exec($cmd);
+				exec($cmd) || die "Couldn't spawn job \'$cmd\': $!";
 		}else{
 				$outstandingJobs++;
 		}

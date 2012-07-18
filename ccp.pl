@@ -44,7 +44,7 @@ print "$maxsnap $maxseg\n";
 # --- diff only files that are actually different (size and md5 check) ---
 my($j) = 0;
 
-while($j < $maxseg){
+while($j <= $maxseg){
 		my($i) = 1;
 		my($lastsnap) = $i;
 

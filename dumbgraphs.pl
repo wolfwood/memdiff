@@ -53,8 +53,15 @@ my($seg, $snap);
 for $seg (sort {$a <=> $b} keys %sizesForSegs){
 		open(OUT, ">$indir/size$seg");
 
-		for $snap (sort {$a <=> $b} keys $sizesForSegs{$seg}){
-				print OUT "$snap $sizesForSegs{$seg}{$snap}\n";
+		$snap = 2;
+
+		while($snap <= $maxsnap){
+				if(defined $sizesForSegs{$seg}{$snap}){
+						print OUT "$snap $sizesForSegs{$seg}{$snap}\n";
+				}else{
+						print OUT "$snap 0\n";
+				}
+				$snap++;
 		}
 
 		close OUT;
@@ -96,8 +103,6 @@ print SCRIPT "plot ";
 my($i) = 0;
 
 for $seg (sort {$a <=> $b} keys %sizesForSegs){
-#for $seg (4,7){
-
 		my($datafile) = "$indir/size$seg";
 
 		if(-e $datafile){

@@ -4,6 +4,8 @@ use strict;
 
 use Jobs;
 
+setMaxJobs(20);
+
 unless(scalar @ARGV >= 2){
 		print "semantically-compressed recursive copy for memsnap data sets\n\n";
 		print "\tUsage: $0 <data dir> <compressed clone dir>\n";

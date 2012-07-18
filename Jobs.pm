@@ -2,7 +2,7 @@ package Jobs;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(enqueueJob drainQueue);
+@EXPORT = qw(enqueueJob drainQueue setMaxJobs);
 
 my($maxJobs, $outstandingJobs) = (4,0);
 

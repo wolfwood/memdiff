@@ -61,7 +61,7 @@ closedir INDIR;
 print "$maxsnap $maxseg\n";
 
 
-unless((scalar %pids) > 0){
+unless((scalar (keys %pids)) > 0){
 		$pids{""} = 0;
 }
 

@@ -16,6 +16,10 @@
 typedef unsigned long long ulong;
 typedef unsigned int uint;
 
+ulong roundUpDiv(ulong a, ulong b){
+  return (a/b) + ((a%b)?1:0);
+}
+
 int main(int argc, char** argv){
   if(argc < 3){
     printf("Usage: %s <old file> <new file>\n", argv[0]);
@@ -35,22 +39,22 @@ int main(int argc, char** argv){
   
   off_t len_old = lseek(fd_old, 0, SEEK_END);
   off_t len_new = lseek(fd_new, 0, SEEK_END);
-  off_t bound = len_old;
-
+  off_t bound1 = len_old;
+  off_t bound2 = len_new;
 
   if(len_old > len_new){
-    fprintf(stderr, "HANDLE THIS!!!\n");
-    bound = len_new;
+    bound1 = len_new;
+    bound2 = len_old;
   }
 
-  // reset offset
+  // rewind offset
   lseek(fd_old, 0, SEEK_SET);
   lseek(fd_new, 0, SEEK_SET);
 
   ulong* buf_old = malloc(blocksize);
   ulong* buf_new = malloc(blocksize);
 
-  for(ulong i = 0; i < ((bound / blocksize) + ((bound % blocksize)?1:0)); i++){
+  for(ulong i = 0; i < roundUpDiv(bound1, blocksize); i++){
     // read bufs
     ssize_t err = read(fd_old, buf_old, blocksize);
     if(err != blocksize){fprintf(stderr, "Didn't read fully\n");return 1;}
@@ -67,6 +71,11 @@ int main(int argc, char** argv){
 	break;
       }
     }	  
+  }
+
+  // count size mismatch as edits too
+  for(ulong i = roundUpDiv(bound1, blocksize); i < roundUpDiv(bound2, blocksize); i++){
+    printf("%llu\n", i);
   }
   
   return 0;

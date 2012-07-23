@@ -2,6 +2,8 @@
 
 use strict;
 
+use MemDiff;
+
 use Jobs;
 
 setMaxJobs(20);
@@ -12,59 +14,17 @@ unless(scalar @ARGV >= 2){
 		exit;
 }
 
-my($indir) = $ARGV[0];
+setDataDir($ARGV[0]);
+
+my($indir) = getDataDir();
 my($outdir) = $ARGV[1];
 
 my($infile, $outfile);
 
-my(%pids);
-
 # --- find the bounds ---
-my($maxseg, $maxsnap) = (0,0);
-
-opendir(INDIR, $indir) || die "can't opendir $indir: $!\n";
-
-while(readdir INDIR){
-		if(/pid(\d+)_snap(\d+)_seg(\d+)/){
-				my($pid) = $1;
-				my($snap) = $2;
-				my($seg) = $3;
-
-				# don't actually need the test...
-				unless(defined $pids{$pid}){
-						$pids{$pid} = 0;
-				}
-
-				if($snap > $maxsnap){
-						$maxsnap = $snap;
-				}
-
-				if($seg > $maxseg){
-						$maxseg = $seg;
-				}
-		}elsif(/snap(\d+)_seg(\d+)/){
-				my($snap) = $1;
-				my($seg) = $2;
-
-				if($snap > $maxsnap){
-						$maxsnap = $snap;
-				}
-
-				if($seg > $maxseg){
-						$maxseg = $seg;
-				}
-		}
-}
-
-closedir INDIR;
-
+my($maxseg, $maxsnap) = indexData();
 print "$maxsnap $maxseg\n";
-
-
-unless((scalar (keys %pids)) > 0){
-		$pids{""} = 0;
-}
-
+my(%pids) = getPids();
 
 # --- diff only files that are actually different (size and md5 check) ---
 my($j) = 0;
